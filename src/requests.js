@@ -15,4 +15,10 @@ const createAnecdote = newNote => {
 
 }
 
-export { getAnecdotes, createAnecdote }
+const updateVotes = updatedAnecdote => {
+  return axios
+    .put(`${baseUrl}/${updatedAnecdote.id}`, updatedAnecdote)
+    .then(res => res.data)
+}
+
+export { getAnecdotes, createAnecdote, updateVotes }
