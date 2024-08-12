@@ -8,4 +8,11 @@ const getAnecdotes = () => {
     .then(res => res.data)
 }
 
-export { getAnecdotes }
+const createAnecdote = newNote => {
+  return axios
+    .post(baseUrl, newNote)
+    .then(res => res.data)
+
+}
+
+export { getAnecdotes, createAnecdote }
