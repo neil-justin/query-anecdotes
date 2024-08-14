@@ -7,8 +7,30 @@ const AnecdoteForm = () => {
 
   const newAnecdoteMutation = useMutation({
     mutationFn: createAnecdote,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
+      notificationDispatch({
+        type: 'MOUNT',
+        payload: `new anecdote '${data.content}' is created`
+      })
+      setTimeout(() => {
+        notificationDispatch({
+          type: 'UNMOUNT'
+        })
+      }, 5000)
+    },
+    onError: (error, variables, context) => {
+      if (error.name === 'AxiosError') {
+        notificationDispatch({
+          type: 'MOUNT',
+          payload: `anecdote '${variables.content}' is too short. must have at least 5 characters`
+        })
+        setTimeout(() => {
+          notificationDispatch({
+            type: 'UNMOUNT'
+          })
+        }, 5000)
+      }
     }
   })
   const notificationDispatch = useNotificationDispatch()
@@ -18,15 +40,6 @@ const AnecdoteForm = () => {
     const anecdoteText = event.target.anecdote.value
     event.target.anecdote.value = ''
     newAnecdoteMutation.mutate({ content: anecdoteText, votes: 0 })
-    notificationDispatch({
-      type: 'MOUNT',
-      payload: `new anecdote '${anecdoteText}' is created`
-    })
-    setTimeout(() => {
-      notificationDispatch({
-        type: 'UNMOUNT'
-      })
-    }, 5000)
   }
 
   return (
